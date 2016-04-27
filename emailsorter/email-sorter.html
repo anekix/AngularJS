@@ -1,0 +1,71 @@
+<html>
+<head>
+<script src="angular.js"></script>
+<style>
+  th {
+    background-color: rgb(112, 196, 105);
+    color: white;
+    font-weight: normal;
+    padding: 8px 10px;
+  }
+  td {
+    background-color: rgb(238, 238, 238);
+    color: rgb(111, 111, 111);
+    padding: 8px 10px;
+    px 30px;
+  }
+
+</style>
+</head>
+
+<body ng-app="apiTest" ng-controller="apiController">
+Search by email:<input ng-model="query"> <br>
+Search by id   :<input ng-model="id_s"> <input ng-model="id_e"><br>
+<!-- <p>query entered:{{ query }} </p> -->
+<br>
+<!-- show the div if query is empty"-->
+<div ng-if="!query">
+<table>
+	<tr><th>ID</th><th>Name</th><th>Email</th></tr>
+	<tr ng-repeat="comment in comments | filter: greaterThan(id_s,id_e) ">
+		<td>{{ comment.id }}</td> <td> {{ comment.name }} </td> <td>{{comment.email }}</td>
+	</tr>
+</table>
+</div>
+<!-- show the div if some query keyword is present -->
+<div ng-if="query">
+<table>
+	<tr><th>ID</th><th>Name</th><th>Email</th></tr>
+	<tr ng-repeat="comment in comments | filter:query ">
+		<td>{{ comment.id }}</td> <td> {{ comment.name }} </td> <td>{{comment.email }}</td>
+	</tr>
+</table>
+
+
+</body>
+<script>
+
+
+var app = angular.module('apiTest',[]);
+app.controller("apiController",function($scope,$http){
+		$http.get("http://jsonplaceholder.typicode.com/comments").success(function(data){
+			$scope.comments = data;
+			console.log(data);
+			});
+		$scope.query = "";
+		$scope.id_s = 1 ;
+		$scope.id_e = 100 ;
+		//Filter Function
+                $scope.greaterThan = function(id_s,id_e) {
+                return function(comments) {                          
+                if ( comments['id'] >= id_s && comments['id'] <= id_e ) {                
+                return true;
+                 } else {                
+                return false;
+                }
+             }
+            };
+		});
+		
+</script>
+</html>
